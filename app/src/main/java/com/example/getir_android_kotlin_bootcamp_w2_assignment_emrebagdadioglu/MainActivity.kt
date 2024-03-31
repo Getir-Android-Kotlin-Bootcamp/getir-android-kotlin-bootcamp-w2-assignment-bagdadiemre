@@ -3,12 +3,16 @@ package com.example.getir_android_kotlin_bootcamp_w2_assignment_emrebagdadioglu
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import  com.example.getir_android_kotlin_bootcamp_w2_assignment_emrebagdadioglu.R
+import com.google.android.libraries.places.R as placesR
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.DrawableRes
@@ -34,6 +38,7 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
+import java.io.IOException
 
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -51,8 +56,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         //enableEdgeToEdge()
         Places.initialize(applicationContext, getString(R.string.google_maps_key))
+
         autoCompleteFragment =
             supportFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
+
+
+
+        autoCompleteFragment.getView()
         val info: CardView = findViewById(R.id.infoCardView)
         autoCompleteFragment.setHint("Where is your location ?")
         autoCompleteFragment.setPlaceFields(
@@ -60,6 +70,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 Place.Field.ID, Place.Field.ADDRESS, Place.Field.LAT_LNG
             )
         )
+
         autoCompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
                 val latLng = place.latLng
@@ -71,9 +82,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
                 if (latLng != null) {
                     val markerOptions =
-                        MarkerOptions().position(latLng).title("Current Location")
-                            .icon(bitmapDescriptorFromVector(this@MainActivity, R.drawable.ic_marker))
-                            .anchor(0.5f, 0.5f)
+                        MarkerOptions().position(latLng).title("Current Location").icon(
+                            bitmapDescriptorFromVector(
+                                this@MainActivity, R.drawable.ic_marker
+                            )
+                        ).anchor(0.5f, 0.5f)
 
                     val marker = mGoogleMap?.addMarker(markerOptions)
 
@@ -97,14 +110,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         val zoomLevel = mGoogleMap?.cameraPosition?.zoom ?: 0f
 
                         val newRadius1 = calculateRadius(
-                            zoomLevel,
-                            250
+                            zoomLevel, 250
                         ) // Calculate the new radius based on the zoom level
                         circle1?.radius = newRadius1
 
                         val newRadius2 = calculateRadius(
-                            zoomLevel,
-                            100
+                            zoomLevel, 100
                         ) // Calculate the new radius based on the zoom level
                         circle2?.radius = newRadius2
 
@@ -153,6 +164,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
 
+
+
         try {
 
             val success = googleMap.setMapStyle(
@@ -176,6 +189,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 val currentLatLng = LatLng(location.latitude, location.longitude)
 
                 mGoogleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
+
+
+                val addressTextView: TextView = findViewById(R.id.locationText)
+                addressTextView.text = getAddressFromLatLng(this, currentLatLng)
 
                 // Add marker at current location
                 val markerOptions =
@@ -205,14 +222,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     val zoomLevel = mGoogleMap?.cameraPosition?.zoom ?: 0f
 
                     val newRadius1 = calculateRadius(
-                        zoomLevel,
-                        250
+                        zoomLevel, 250
                     ) // Calculate the new radius based on the zoom level
                     circle1?.radius = newRadius1
 
                     val newRadius2 = calculateRadius(
-                        zoomLevel,
-                        100
+                        zoomLevel, 100
                     ) // Calculate the new radius based on the zoom level
                     circle2?.radius = newRadius2
 
@@ -228,9 +243,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun calculateRadius(zoomLevel: Float, factor: Int): Double {
-        // Calculate the new radius based on the zoom level
-        // Adjust the factor as needed to fit your requirements
-        // Adjust this factor as needed
         return 1000 * Math.pow(2.0, (20 - zoomLevel).toDouble()) / factor
     }
 
@@ -254,6 +266,23 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val canvas = Canvas(bitmap)
         vectorDrawable!!.draw(canvas)
         return BitmapDescriptorFactory.fromBitmap(bitmap)
+    }
+
+    fun getAddressFromLatLng(context: Context, latLng: LatLng): String {
+        val geocoder = Geocoder(context)
+        var addressText = ""
+        try {
+            val addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
+            if (addresses != null) {
+                if (addresses.isNotEmpty()) {
+                    val address = addresses[0]
+                    addressText = address.getAddressLine(0)
+                }
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return addressText
     }
 
 }
