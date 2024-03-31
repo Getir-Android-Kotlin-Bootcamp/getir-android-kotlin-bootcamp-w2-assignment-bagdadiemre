@@ -46,63 +46,73 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:cardCornerRadius="10dp"
-        android:backgroundTint="#FFDFDF"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="10dp"
-        app:cardBackgroundColor="#FFDFDF"
+        android:backgroundTint="#FFFFFF"
+        android:layout_margin="10dp"
+        app:cardBackgroundColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" >
 
         <LinearLayout
-            android:layout_width="376dp"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="15dp"
+            android:gravity="bottom"
             android:orientation="vertical">
 
             <!-- Line 1 - Your Location -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="8dp"
+                android:layout_gravity="start"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="5dp"
                 android:text="Your Location"
-                android:textSize="16sp" />
+                android:textSize="18sp"
+                android:fontFamily="@font/poppins_medium"
+                android:textColor="@color/gray"  />
 
             <!-- Line 2 - Icon and actual address -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
+                android:gravity="center_vertical|start"
                 android:orientation="horizontal">
 
                 <!-- Icon for location -->
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="47dp"
+                    android:layout_height="47dp"
                     android:layout_marginEnd="8dp"
-                    android:src="@drawable/ic_marker" />
+                    android:src="@drawable/ic_circle_marker" />
 
                 <!-- Text for actual address -->
                 <TextView
                     android:id="@+id/locationText"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_width="300dp"
+                    android:layout_height="50dp"
+                    android:fontFamily="@font/poppins_medium"
                     android:text="Your Actual Address"
-                    android:textSize="16sp" />
-
+                    android:gravity="center_vertical"
+                    android:textColor="@color/lightBlack"
+                    android:textSize="16sp"
+                    android:maxLines="2" />
             </LinearLayout>
 
+
             <!-- Line 3 - Button for setting location -->
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:text="Set Location" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/setLocationButton"
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/gradient_background"
+                android:fontFamily="@font/poppins_bold"
+                android:textColor="#F6FAFE"
+                android:textSize="16sp"
+                android:text="Set Location"
+                android:textAllCaps="false"/>
 
         </LinearLayout>
 

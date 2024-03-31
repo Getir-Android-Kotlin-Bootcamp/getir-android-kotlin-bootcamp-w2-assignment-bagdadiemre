@@ -9,6 +9,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
@@ -23,6 +24,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.CircleOptions
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
@@ -33,7 +35,6 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
-import kotlin.math.pow
 
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -41,6 +42,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private var mGoogleMap: GoogleMap? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var autoCompleteFragment: AutocompleteSupportFragment
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,8 +64,55 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         autoCompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
                 val latLng = place.latLng
+                place.address?.let {
+                    val address = it
+                    val addressTextView: TextView = findViewById(R.id.locationText)
+                    addressTextView.text = address
+                    info.visibility = CardView.VISIBLE
+                }
                 if (latLng != null) {
+                    val markerOptions =
+                        MarkerOptions().position(latLng).title("Current Location")
+                            .icon(bitmapDescriptorFromVector(this@MainActivity, R.drawable.ic_marker))
+                            .anchor(0.5f, 0.5f)
+
+                    val marker = mGoogleMap?.addMarker(markerOptions)
+
+// Add a circle around the marker
+                    val circle1 = mGoogleMap?.addCircle(
+                        CircleOptions().center(latLng).radius(130.0) // radius in meters
+                            .strokeColor(Color.TRANSPARENT) // "#f6dee0"
+                            .fillColor(Color.parseColor("#80D61355")) // fill color, transparent in this case
+                    )
+
+                    val circle2 = mGoogleMap?.addCircle(
+                        CircleOptions().center(latLng).radius(230.0) // radius in meters
+                            .strokeColor(Color.TRANSPARENT) // "#f6dee0"
+                            .fillColor(Color.parseColor("#80f5d3d5")) // fill color, transparent in this case
+                    )
+
+// Associate the circle with the marker for management purposes
+                    marker?.tag = Pair(circle1, circle2)
+
+                    mGoogleMap?.setOnCameraIdleListener {
+                        val zoomLevel = mGoogleMap?.cameraPosition?.zoom ?: 0f
+
+                        val newRadius1 = calculateRadius(
+                            zoomLevel,
+                            250
+                        ) // Calculate the new radius based on the zoom level
+                        circle1?.radius = newRadius1
+
+                        val newRadius2 = calculateRadius(
+                            zoomLevel,
+                            100
+                        ) // Calculate the new radius based on the zoom level
+                        circle2?.radius = newRadius2
+
+                    }
                     zoomOnMap(latLng)
+
+
                 }
             }
 
@@ -82,7 +131,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val newLatLngZoom = CameraUpdateFactory.newLatLngZoom(latLng, 12f)
         mGoogleMap?.moveCamera(newLatLngZoom)
     }
-
 
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -104,8 +152,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             )
             return
         }
-
-        // Set Marker
 
 
         try {
@@ -129,6 +175,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         locationTask.addOnSuccessListener(OnSuccessListener { location ->
             if (location != null) {
                 val currentLatLng = LatLng(location.latitude, location.longitude)
+
                 mGoogleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
 
                 // Add marker at current location
@@ -158,10 +205,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 mGoogleMap?.setOnCameraIdleListener {
                     val zoomLevel = mGoogleMap?.cameraPosition?.zoom ?: 0f
 
-                    val newRadius1 = calculateRadius(zoomLevel, 250) // Calculate the new radius based on the zoom level
+                    val newRadius1 = calculateRadius(
+                        zoomLevel,
+                        250
+                    ) // Calculate the new radius based on the zoom level
                     circle1?.radius = newRadius1
 
-                    val newRadius2 = calculateRadius(zoomLevel, 100) // Calculate the new radius based on the zoom level
+                    val newRadius2 = calculateRadius(
+                        zoomLevel,
+                        100
+                    ) // Calculate the new radius based on the zoom level
                     circle2?.radius = newRadius2
 
                 }
@@ -178,7 +231,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun calculateRadius(zoomLevel: Float, factor: Int): Double {
         // Calculate the new radius based on the zoom level
         // Adjust the factor as needed to fit your requirements
-         // Adjust this factor as needed
+        // Adjust this factor as needed
         return 1000 * Math.pow(2.0, (20 - zoomLevel).toDouble()) / factor
     }
 
