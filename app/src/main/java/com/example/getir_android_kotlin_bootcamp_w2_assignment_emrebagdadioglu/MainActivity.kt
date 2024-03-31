@@ -33,6 +33,7 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
+import kotlin.math.pow
 
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -55,9 +56,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         autoCompleteFragment.setHint("Where is your location ?")
         autoCompleteFragment.setPlaceFields(
             listOf(
-                Place.Field.ID,
-                Place.Field.ADDRESS,
-                Place.Field.LAT_LNG
+                Place.Field.ID, Place.Field.ADDRESS, Place.Field.LAT_LNG
             )
         )
         autoCompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
@@ -84,27 +83,24 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mGoogleMap?.moveCamera(newLatLngZoom)
     }
 
+
+
     override fun onMapReady(googleMap: GoogleMap) {
         mGoogleMap = googleMap
 
         // Check for location permission
         if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-            && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
+                this, Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             // Request location permissions if not granted
             ActivityCompat.requestPermissions(
-                this,
-                arrayOf(
+                this, arrayOf(
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION
-                ),
-                PERMISSIONS_REQUEST_LOCATION
+                ), PERMISSIONS_REQUEST_LOCATION
             )
             return
         }
@@ -136,49 +132,67 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 mGoogleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
 
                 // Add marker at current location
-                val markerOptions = MarkerOptions()
-                    .position(currentLatLng)
-                    .title("Current Location")
-                    .icon(bitmapDescriptorFromVector(this@MainActivity, R.drawable.ic_marker))
-                    .anchor(0.5f, 0.5f)
+                val markerOptions =
+                    MarkerOptions().position(currentLatLng).title("Current Location")
+                        .icon(bitmapDescriptorFromVector(this@MainActivity, R.drawable.ic_marker))
+                        .anchor(0.5f, 0.5f)
 
                 val marker = mGoogleMap?.addMarker(markerOptions)
 
 // Add a circle around the marker
-                val circle = mGoogleMap?.addCircle(
-                    CircleOptions()
-                        .center(currentLatLng)
-                        .radius(130.0) // radius in meters
+                val circle1 = mGoogleMap?.addCircle(
+                    CircleOptions().center(currentLatLng).radius(130.0) // radius in meters
                         .strokeColor(Color.TRANSPARENT) // "#f6dee0"
-                        .fillColor(Color.parseColor("#80f5b0b7")) // fill color, transparent in this case
+                        .fillColor(Color.parseColor("#80D61355")) // fill color, transparent in this case
+                )
+
+                val circle2 = mGoogleMap?.addCircle(
+                    CircleOptions().center(currentLatLng).radius(230.0) // radius in meters
+                        .strokeColor(Color.TRANSPARENT) // "#f6dee0"
+                        .fillColor(Color.parseColor("#80f5d3d5")) // fill color, transparent in this case
                 )
 
 // Associate the circle with the marker for management purposes
-                marker?.tag = circle
+                marker?.tag = Pair(circle1, circle2)
+
+                mGoogleMap?.setOnCameraIdleListener {
+                    val zoomLevel = mGoogleMap?.cameraPosition?.zoom ?: 0f
+
+                    val newRadius1 = calculateRadius(zoomLevel, 250) // Calculate the new radius based on the zoom level
+                    circle1?.radius = newRadius1
+
+                    val newRadius2 = calculateRadius(zoomLevel, 100) // Calculate the new radius based on the zoom level
+                    circle2?.radius = newRadius2
+
+                }
+
+
             } else {
                 Toast.makeText(
-                    this@MainActivity,
-                    "Current location is not available",
-                    Toast.LENGTH_SHORT
+                    this@MainActivity, "Current location is not available", Toast.LENGTH_SHORT
                 ).show()
             }
         })
     }
+
+    private fun calculateRadius(zoomLevel: Float, factor: Int): Double {
+        // Calculate the new radius based on the zoom level
+        // Adjust the factor as needed to fit your requirements
+         // Adjust this factor as needed
+        return 1000 * Math.pow(2.0, (20 - zoomLevel).toDouble()) / factor
+    }
+
 
     companion object {
         private const val PERMISSIONS_REQUEST_LOCATION = 100
     }
 
     private fun bitmapDescriptorFromVector(
-        context: Context,
-        @DrawableRes vectorResId: Int
+        context: Context, @DrawableRes vectorResId: Int
     ): BitmapDescriptor {
         val vectorDrawable = ContextCompat.getDrawable(context, vectorResId)
         vectorDrawable!!.setBounds(
-            0,
-            0,
-            vectorDrawable!!.intrinsicWidth,
-            vectorDrawable!!.intrinsicHeight
+            0, 0, vectorDrawable!!.intrinsicWidth, vectorDrawable!!.intrinsicHeight
         )
         val bitmap = Bitmap.createBitmap(
             vectorDrawable!!.intrinsicWidth,

@@ -53,7 +53,61 @@
         app:cardBackgroundColor="#FFDFDF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent" >
+
+        <LinearLayout
+            android:layout_width="376dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Line 1 - Your Location -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="Your Location"
+                android:textSize="16sp" />
+
+            <!-- Line 2 - Icon and actual address -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <!-- Icon for location -->
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/ic_marker" />
+
+                <!-- Text for actual address -->
+                <TextView
+                    android:id="@+id/locationText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Your Actual Address"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <!-- Line 3 - Button for setting location -->
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="Set Location" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
 
 
 
