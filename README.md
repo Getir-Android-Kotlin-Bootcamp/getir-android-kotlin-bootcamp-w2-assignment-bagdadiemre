@@ -10,3 +10,6 @@
 1 - Set Location sayfasının tasarımının kodlanması
 
 2- Sayfa açıldığında haritada mevcut konuma yönlendirilmesi
+
+![Working Demo](paste_your_video_raw_url_here)
+
