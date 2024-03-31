@@ -9,49 +9,99 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/mapFragment"
+        class="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        class = "com.google.android.gms.maps.SupportMapFragment"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/searchCardView"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        app:cardCornerRadius="10dp"
-        android:backgroundTint="#FFDFDF"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="10dp"
-        app:cardBackgroundColor="#FFDFDF"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" >
-
-    <androidx.fragment.app.FragmentContainerView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-        android:id="@+id/autocomplete_fragment" />
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="30dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    </androidx.cardview.widget.CardView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="15dp"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/button_background">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:contentDescription="back"
+                    android:src="@drawable/ic_back" />
+            </FrameLayout>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+            <!-- Second Box -->
+            <FrameLayout
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/button_background">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:contentDescription="back"
+                    android:src="@drawable/ic_notifiaction" />
+
+            </FrameLayout>
+        </LinearLayout>
+
+
+        <!-- Your CardView -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/searchCardView"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:backgroundTint="#f6dcde"
+            app:cardBackgroundColor="#f6dcde"
+            app:cardCornerRadius="10dp">
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/autocomplete_fragment"
+                android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
 
 
     <androidx.cardview.widget.CardView
         android:id="@+id/infoCardView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="10dp"
-        android:backgroundTint="#FFFFFF"
         android:layout_margin="10dp"
+        android:backgroundTint="#FFFFFF"
         app:cardBackgroundColor="#FFFFFF"
+        app:cardCornerRadius="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" >
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -67,10 +117,10 @@
                 android:layout_gravity="start"
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="5dp"
-                android:text="Your Location"
-                android:textSize="18sp"
                 android:fontFamily="@font/poppins_medium"
-                android:textColor="@color/gray"  />
+                android:text="Your Location"
+                android:textColor="@color/gray"
+                android:textSize="18sp" />
 
             <!-- Line 2 - Icon and actual address -->
             <LinearLayout
@@ -92,11 +142,11 @@
                     android:layout_width="300dp"
                     android:layout_height="50dp"
                     android:fontFamily="@font/poppins_medium"
-                    android:text="Your Actual Address"
                     android:gravity="center_vertical"
+                    android:maxLines="2"
+                    android:text="Your Actual Address"
                     android:textColor="@color/lightBlack"
-                    android:textSize="16sp"
-                    android:maxLines="2" />
+                    android:textSize="16sp" />
             </LinearLayout>
 
 
@@ -109,16 +159,14 @@
                 android:layout_marginTop="15dp"
                 android:background="@drawable/gradient_background"
                 android:fontFamily="@font/poppins_bold"
-                android:textColor="#F6FAFE"
-                android:textSize="16sp"
                 android:text="Set Location"
-                android:textAllCaps="false"/>
+                android:textAllCaps="false"
+                android:textColor="#F6FAFE"
+                android:textSize="16sp" />
 
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
-
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
