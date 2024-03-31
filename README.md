@@ -11,5 +11,5 @@
 
 2- Sayfa açıldığında haritada mevcut konuma yönlendirilmesi
 
-![Working Demo](workingDemo.mp4)
+![Working Demo](workingDemoGif.gif)
 
